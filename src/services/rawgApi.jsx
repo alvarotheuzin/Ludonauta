@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_KEY = '';
+const API_KEY = 'b3e3b8feb90446e483b75b9b27729abb';
 
 const api = axios.create({
   baseURL: 'https://api.rawg.io/api',
@@ -10,7 +10,7 @@ const api = axios.create({
   },
 });
 
-// 🔹 Preview com 6 jogos (Home)
+//Preview com 6 jogos (Home)
 const fetchGamesByPlatformsPreview = async (platformIds) => {
   try {
     const response = await api.get('/games', {
@@ -29,7 +29,7 @@ const fetchGamesByPlatformsPreview = async (platformIds) => {
   }
 };
 
-// 🔸 Completo com 40 jogos (Progresso, listas)
+//Completo com 40 jogos (Progresso, listas)
 const fetchGamesByPlatformsFull = async (platformIds) => {
   try {
     const response = await api.get('/games', {
@@ -48,19 +48,19 @@ const fetchGamesByPlatformsFull = async (platformIds) => {
   }
 };
 
-// 🏠 Para a Home (6 jogos)
+//Para a Home (6 jogos)
 export const getPCGamesPreview = () => fetchGamesByPlatformsPreview([4]);
 export const getXboxGamesPreview = () => fetchGamesByPlatformsPreview([1, 186]);
 export const getPlayStationGamesPreview = () => fetchGamesByPlatformsPreview([18, 187]);
 export const getMobileGamesPreview = () => fetchGamesByPlatformsPreview([3, 21]);
 
-// 📄 Para listas completas (40 jogos)
+//Para listas completas (40 jogos)
 export const getPCGamesFull = () => fetchGamesByPlatformsFull([4]);
 export const getXboxGamesFull = () => fetchGamesByPlatformsFull([1, 186]);
 export const getPlayStationGamesFull = () => fetchGamesByPlatformsFull([18, 187]);
 export const getMobileGamesFull = () => fetchGamesByPlatformsFull([3, 21]);
 
-// 🔹 Carrossel de jogos novos
+//Carrossel de jogos novos
 const fetchNewGame = async (platformId) => {
   try {
     const response = await api.get('/games', {
@@ -86,7 +86,7 @@ export const getNewGamesForCarousel = async () => {
   return [pc, ps5, xbox].filter(Boolean);
 };
 
-// 🔍 Buscar todos os jogos com paginação
+//Buscar todos os jogos com paginação
 export const getAllGames = async (page = 1, pageSize = 20) => {
   try {
     const response = await api.get('/games', {

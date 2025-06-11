@@ -29,27 +29,63 @@ function HomeStack() {
         name="Detalhes"
         component={GameDetailScreen}
         options={{ headerShown: false }}
-        
+
       />
       <Stack.Screen
         name="PlayStationGames"
         component={PlayStationGamesScreen}
-        options={{ title: 'PlayStation' }}
+        options={{
+          title: 'PlayStation',
+          headerStyle: {
+            backgroundColor: '#1c1c1e',
+          },
+          headerTintColor: '#C17CFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
       />
       <Stack.Screen
         name="XboxGames"
         component={XboxGamesScreen}
-        options={{ title: 'Xbox' }}
+        options={{
+          title: 'Xbox',
+          headerStyle: {
+            backgroundColor: '#1c1c1e',
+          },
+          headerTintColor: '#C17CFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
       />
       <Stack.Screen
         name="MobileGames"
         component={MobileGamesScreen}
-        options={{ title: 'Mobile' }}
+        options={{
+          title: 'Mobile',
+          headerStyle: {
+            backgroundColor: '#1c1c1e',
+          },
+          headerTintColor: '#C17CFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
       />
       <Stack.Screen
         name="PcGames"
         component={PcGamesScreen}
-        options={{ title: 'PC' }}
+        options={{
+          title: 'PC',
+          headerStyle: {
+            backgroundColor: '#1c1c1e',
+          },
+          headerTintColor: '#C17CFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
       />
     </Stack.Navigator>
   );
@@ -57,7 +93,23 @@ function HomeStack() {
 
 export default function Navigation() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#1c1c1e',
+          borderTopWidth: 0,
+          height: 68,
+        },
+        tabBarActiveTintColor: '#C17CFF',
+        tabBarInactiveTintColor: '#555',
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+          marginBottom: 4,
+        },
+      }}
+    >
       <Tab.Screen
         name="HomeTab"
         component={HomeStack}
@@ -72,6 +124,7 @@ export default function Navigation() {
         name="Progresso"
         component={GameProgressScreen}
         options={{
+          tabBarLabel: 'Progresso',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="progress-check" color={color} size={size} />
           ),
@@ -81,6 +134,7 @@ export default function Navigation() {
         name="Meus Jogos"
         component={MyGamesScreen}
         options={{
+          tabBarLabel: 'Meus Jogos',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="playlist-edit" color={color} size={size} />
           ),
@@ -90,11 +144,14 @@ export default function Navigation() {
         name="Perfil"
         component={ProfileScreen}
         options={{
+          tabBarLabel: 'Perfil',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" color={color} size={size} />
           ),
         }}
       />
     </Tab.Navigator>
+
+
   );
 }
