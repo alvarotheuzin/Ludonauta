@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, Linking, TouchableOpacity, ImageBackground, } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet, Linking, TouchableOpacity, ImageBackground} from 'react-native';
 import { getGameDetails, getGameScreenshots } from '../services/rawgApi';
+import Header from '../components/Header';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+const platformIcons = {
+  PC: 'laptop',
+  PlayStation: 'sony-playstation',
+  Xbox: 'microsoft-xbox',
+  Nintendo: 'nintendo-switch',
+  iOS: 'apple-ios',
+  Android: 'android',
+};
 
 const storeLogos = {
   Steam: require('../imagens/steam.png'),
@@ -14,8 +25,6 @@ const GameDetailScreen = ({ route }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!gameId) return;
-
     const fetchDetails = async () => {
       setLoading(true);
       try {
@@ -29,14 +38,8 @@ const GameDetailScreen = ({ route }) => {
         setLoading(false);
       }
     };
-
     fetchDetails();
   }, [gameId]);
-
-  if (loading)
-    return <Text style={styles.loadingText}>Carregando...</Text>;
-  if (!game)
-    return <Text style={styles.loadingText}>Jogo não encontrado.</Text>;
 
   const openURL = (url) => {
     if (url) {
@@ -46,59 +49,95 @@ const GameDetailScreen = ({ route }) => {
     }
   };
 
+  if (loading || !game) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Carregando...</Text>
+      </View>
+    );
+  }
+
   return (
+
+
     <ImageBackground
       source={require('../imagens/galaxy.jpg')}
       style={styles.background}
       resizeMode="cover"
     >
+      <Header />
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>{game.name || 'Nome indisponível'}</Text>
+        <Text style={styles.title}>{game.name}</Text>
+        {game.background_image && (
+          <Image
+            source={{ uri: game.background_image }}
+            style={styles.coverImage}
+          />
+        )}
 
-        <Text style={styles.subTitle}>Capturas de Tela</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.screenshotContainer}
         >
-          {screenshots.length > 0 ? (
-            screenshots.map((img) => (
-              <Image
-                key={img.id}
-                source={{ uri: img.image }}
-                style={styles.screenshot}
-              />
-            ))
-          ) : (
-            <Text style={styles.noScreenshots}>Nenhuma captura disponível.</Text>
-          )}
+          {screenshots.map((img) => (
+            <Image
+              key={img.id}
+              source={{ uri: img.image }}
+              style={styles.screenshot}
+            />
+          ))}
         </ScrollView>
 
-        <Text style={styles.subTitle}>Disponível em:</Text>
-        <View style={styles.storeButtonsContainer}>
-          {game.stores?.length > 0 ? (
-            game.stores.map(({ store, url }, index) => {
-              if (!url) return null;
-              const logo = storeLogos[store.name];
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.storeButton}
-                  onPress={() => openURL(url)}
-                >
-                  {logo ? (
-                    <Image source={logo} style={styles.storeLogo} />
-                  ) : (
-                    <Text style={styles.storeText}>{store.name}</Text>
-                  )}
-                </TouchableOpacity>
-              );
-            })
-          ) : (
-            <Text style={styles.noStores}>Nenhuma loja disponível.</Text>
-          )}
+        {/* Plataformas */}
+        <View style={styles.platformContainer}>
+          {game.platforms?.map(({ platform }) => {
+            const icon = Object.entries(platformIcons).find(([name]) =>
+              platform.name.includes(name)
+            );
+            return (
+              <View key={platform.id} style={styles.platformIcon}>
+                <MaterialCommunityIcons
+                  name={icon ? icon[1] : 'gamepad-variant'}
+                  color="#ccc"
+                  size={20}
+                />
+                <Text style={styles.platformText}>{platform.name}</Text>
+              </View>
+            );
+          })}
         </View>
 
+        {/* Capturas de tela */}
+
+        {/* Botão adicionar */}
+        <TouchableOpacity style={styles.addButton}>
+          <MaterialCommunityIcons name="plus" color="#fff" size={20} />
+          <Text style={styles.addButtonText}>Adicionar aos meus jogos</Text>
+        </TouchableOpacity>
+
+        {/* Lojas */}
+        <Text style={styles.subTitle}>Disponível em:</Text>
+        <View style={styles.storeButtonsContainer}>
+          {game.stores?.map(({ store, url }, index) => {
+            const logo = storeLogos[store.name];
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => openURL(url)}
+                style={styles.storeButton}
+              >
+                {logo ? (
+                  <Image source={logo} style={styles.storeLogo} />
+                ) : (
+                  <Text style={styles.storeText}>{store.name}</Text>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Descrição */}
         <Text style={styles.subTitle}>Descrição</Text>
         <Text style={styles.description}>
           {game.description_raw || 'Descrição não disponível.'}
@@ -111,54 +150,74 @@ const GameDetailScreen = ({ route }) => {
 export default GameDetailScreen;
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
+  background: { flex: 1 },
   container: {
-    backgroundColor: 'rgba(0,0,0,0.85)',
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.85)',
     padding: 10,
   },
-  title: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  loadingText: { color: '#fff', fontSize: 18 },
+  coverImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
     marginBottom: 15,
-    textAlign: 'center',
   },
-  loadingText: {
-    color: 'white',
-    padding: 20,
+  title: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 10,
+  },
+  platformContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 10,
+    justifyContent: 'center',
+    gap: 12,
+  },
+  platformIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginBottom: 5,
+  },
+  platformText: {
+    color: '#ccc',
+    marginLeft: 5,
+    fontSize: 14,
+  },
+  screenshotContainer: {
+    flexDirection: 'row',
+    marginVertical: 15,
+  },
+  screenshot: {
+    width: 280,
+    height: 160,
+    marginRight: 10,
+    borderRadius: 10,
+  },
+  addButton: {
+    backgroundColor: '#A020F0',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 15,
+  },
+  addButtonText: {
+    color: '#fff',
+    marginLeft: 6,
+    fontWeight: 'bold',
   },
   subTitle: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  description: {
-    color: '#ddd',
-    fontSize: 16,
-    marginBottom: 20,
-    lineHeight: 22,
-  },
-  screenshotContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  screenshot: {
-    width: 300,
-    height: 180,
-    marginRight: 10,
-    borderRadius: 10,
-  },
-  noScreenshots: {
-    color: '#ccc',
-    marginLeft: 10,
-    fontSize: 14,
+    marginBottom: 6,
   },
   storeButtonsContainer: {
     flexDirection: 'row',
@@ -180,9 +239,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
   },
-  noStores: {
-    color: '#999',
-    textAlign: 'center',
-    marginBottom: 10,
+  description: {
+    color: '#ddd',
+    fontSize: 16,
+    lineHeight: 22,
+    marginBottom: 40,
   },
 });

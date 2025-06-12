@@ -12,7 +12,6 @@ const Header = () => {
         />
         <Text style={styles.title}>Ludonauta</Text>
       </View>
-      <Appbar.Action icon="magnify" onPress={() => {}} />
     </Appbar.Header>
   );
 };
