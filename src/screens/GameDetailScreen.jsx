@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, Linking, TouchableOpacity, ImageBackground} from 'react-native';
+import { 
+  View, 
+  Text, 
+  Image, 
+  ScrollView, 
+  StyleSheet, 
+  Linking, 
+  TouchableOpacity, 
+  ImageBackground
+} from 'react-native';
 import { getGameDetails, getGameScreenshots } from '../services/rawgApi';
 import Header from '../components/Header';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import { addFavoriteGame, removeFavoriteGame, isGameFavorite } from '../services/favoritesStorage';
 
 const platformIcons = {
   PC: 'laptop',
@@ -24,6 +35,9 @@ const GameDetailScreen = ({ route }) => {
   const [screenshots, setScreenshots] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Estado para favorito
+  const [isFavorite, setIsFavorite] = useState(false);
+
   useEffect(() => {
     const fetchDetails = async () => {
       setLoading(true);
@@ -40,6 +54,27 @@ const GameDetailScreen = ({ route }) => {
     };
     fetchDetails();
   }, [gameId]);
+
+  // Verifica se o jogo é favorito ao carregar
+  useEffect(() => {
+    if (gameId) {
+      isGameFavorite(gameId).then(setIsFavorite);
+    }
+  }, [gameId]);
+
+  const toggleFavorite = async () => {
+    if (!game) return;
+    if (isFavorite) {
+      await removeFavoriteGame(game.id);
+    } else {
+      await addFavoriteGame({
+        id: game.id,
+        name: game.name,
+        background_image: game.background_image,
+      });
+    }
+    setIsFavorite(!isFavorite);
+  };
 
   const openURL = (url) => {
     if (url) {
@@ -58,8 +93,6 @@ const GameDetailScreen = ({ route }) => {
   }
 
   return (
-
-
     <ImageBackground
       source={require('../imagens/galaxy.jpg')}
       style={styles.background}
@@ -68,6 +101,7 @@ const GameDetailScreen = ({ route }) => {
       <Header />
       <ScrollView style={styles.container}>
         <Text style={styles.title}>{game.name}</Text>
+
         {game.background_image && (
           <Image
             source={{ uri: game.background_image }}
@@ -75,19 +109,12 @@ const GameDetailScreen = ({ route }) => {
           />
         )}
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.screenshotContainer}
-        >
-          {screenshots.map((img) => (
-            <Image
-              key={img.id}
-              source={{ uri: img.image }}
-              style={styles.screenshot}
-            />
-          ))}
-        </ScrollView>
+        {/* Botão Favoritar */}
+        <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteButton}>
+          <Text style={{ color: '#fff', fontSize: 16 }}>
+            {isFavorite ? '★ Remover dos favoritos' : '☆ Adicionar aos favoritos'}
+          </Text>
+        </TouchableOpacity>
 
         {/* Plataformas */}
         <View style={styles.platformContainer}>
@@ -109,8 +136,21 @@ const GameDetailScreen = ({ route }) => {
         </View>
 
         {/* Capturas de tela */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.screenshotContainer}
+        >
+          {screenshots.map((img) => (
+            <Image
+              key={img.id}
+              source={{ uri: img.image }}
+              style={styles.screenshot}
+            />
+          ))}
+        </ScrollView>
 
-        {/* Botão adicionar */}
+        {/* Botão adicionar aos meus jogos */}
         <TouchableOpacity style={styles.addButton}>
           <MaterialCommunityIcons name="plus" color="#fff" size={20} />
           <Text style={styles.addButtonText}>Adicionar aos meus jogos</Text>
@@ -170,6 +210,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  favoriteButton: {
+    backgroundColor: '#A020F0',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 15,
   },
   platformContainer: {
     flexDirection: 'row',
