@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, FlatList, Text, ScrollView, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import { Card, Title } from 'react-native-paper';
 import Header from '../components/Header';
 import GameCarousel from '../components/GameCarousel';
 import PlatformCards from '../components/PlatformCards';
 import { useNavigation } from '@react-navigation/native';
-import {
-  getNewGamesForCarousel,
-  getPCGamesPreview,
-  getXboxGamesPreview,
-  getPlayStationGamesPreview,
-  getMobileGamesPreview,
-} from '../services/rawgApi';
+import { getNewGamesForCarousel, getPCGamesPreview, getXboxGamesPreview, getPlayStationGamesPreview, getMobileGamesPreview } from '../services/rawgApi';
 
 const GameCard = ({ game }) => {
   const navigation = useNavigation();

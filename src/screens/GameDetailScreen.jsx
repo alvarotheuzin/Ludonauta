@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  ScrollView, 
-  StyleSheet, 
-  Linking, 
-  TouchableOpacity, 
-  ImageBackground
-} from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, Image, ScrollView, StyleSheet, Linking, TouchableOpacity, ImageBackground } from 'react-native';
 import { getGameDetails, getGameScreenshots } from '../services/rawgApi';
 import Header from '../components/Header';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -24,18 +15,12 @@ const platformIcons = {
   Android: 'android',
 };
 
-const storeLogos = {
-  Steam: require('../imagens/steam.png'),
-  'Epic Games Store': require('../imagens/epic.png'),
-};
-
 const GameDetailScreen = ({ route }) => {
   const { gameId } = route.params || {};
   const [game, setGame] = useState(null);
   const [screenshots, setScreenshots] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Estado para favorito
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
@@ -55,7 +40,6 @@ const GameDetailScreen = ({ route }) => {
     fetchDetails();
   }, [gameId]);
 
-  // Verifica se o jogo é favorito ao carregar
   useEffect(() => {
     if (gameId) {
       isGameFavorite(gameId).then(setIsFavorite);
@@ -109,14 +93,12 @@ const GameDetailScreen = ({ route }) => {
           />
         )}
 
-        {/* Botão Favoritar */}
         <TouchableOpacity onPress={toggleFavorite} style={styles.favoriteButton}>
           <Text style={{ color: '#fff', fontSize: 16 }}>
             {isFavorite ? '★ Remover dos favoritos' : '☆ Adicionar aos favoritos'}
           </Text>
         </TouchableOpacity>
 
-        {/* Plataformas */}
         <View style={styles.platformContainer}>
           {game.platforms?.map(({ platform }) => {
             const icon = Object.entries(platformIcons).find(([name]) =>
@@ -135,7 +117,6 @@ const GameDetailScreen = ({ route }) => {
           })}
         </View>
 
-        {/* Capturas de tela */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -150,34 +131,6 @@ const GameDetailScreen = ({ route }) => {
           ))}
         </ScrollView>
 
-        {/* Botão adicionar aos meus jogos */}
-        <TouchableOpacity style={styles.addButton}>
-          <MaterialCommunityIcons name="plus" color="#fff" size={20} />
-          <Text style={styles.addButtonText}>Adicionar aos meus jogos</Text>
-        </TouchableOpacity>
-
-        {/* Lojas */}
-        <Text style={styles.subTitle}>Disponível em:</Text>
-        <View style={styles.storeButtonsContainer}>
-          {game.stores?.map(({ store, url }, index) => {
-            const logo = storeLogos[store.name];
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => openURL(url)}
-                style={styles.storeButton}
-              >
-                {logo ? (
-                  <Image source={logo} style={styles.storeLogo} />
-                ) : (
-                  <Text style={styles.storeText}>{store.name}</Text>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* Descrição */}
         <Text style={styles.subTitle}>Descrição</Text>
         <Text style={styles.description}>
           {game.description_raw || 'Descrição não disponível.'}
@@ -246,15 +199,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 10,
   },
-  addButton: {
-    backgroundColor: '#A020F0',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 15,
-  },
   addButtonText: {
     color: '#fff',
     marginLeft: 6,
@@ -265,26 +209,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 6,
-  },
-  storeButtonsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 15,
-    gap: 10,
-  },
-  storeButton: {
-    marginRight: 10,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  storeLogo: {
-    width: 40,
-    height: 40,
-    resizeMode: 'contain',
-  },
-  storeText: {
-    color: '#fff',
-    fontSize: 14,
   },
   description: {
     color: '#ddd',

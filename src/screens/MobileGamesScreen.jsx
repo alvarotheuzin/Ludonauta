@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-  StatusBar,
-} from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, FlatList, StyleSheet, TouchableOpacity, ImageBackground, StatusBar } from 'react-native';
 import { Card, Title } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { getMobileGamesFull } from '../services/rawgApi';

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {
-    View, Text, TextInput, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Alert, Platform
-} from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/Header';
 import { getPCGamesFull, getXboxGamesFull, getPlayStationGamesFull, getMobileGamesFull } from '../services/rawgApi';
 
-export default function GameProgressScreen({ navigation }) {
+export default function GameProgressScreen() {
     const [games, setGames] = useState([]);
     const [selectedGameId, setSelectedGameId] = useState('');
     const [platform, setPlatform] = useState('');
@@ -19,6 +17,22 @@ export default function GameProgressScreen({ navigation }) {
     const [rating, setRating] = useState('');
     const [comment, setComment] = useState('');
     const [savedMessage, setSavedMessage] = useState('');
+
+const isValidDateBR = (dateStr) => {
+  const brRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+  if (!brRegex.test(dateStr)) return false;
+
+  const [day, month, year] = dateStr.split('/').map(Number);
+
+  const date = new Date(year, month - 1, day);
+
+  return (
+    !isNaN(date.getTime()) &&
+    date.getDate() === day &&
+    date.getMonth() === month - 1 &&
+    date.getFullYear() === year
+  );
+};
 
     useEffect(() => {
         async function fetchPlatformGames() {
@@ -43,8 +57,33 @@ export default function GameProgressScreen({ navigation }) {
     async function handleSave() {
         const selectedGame = games.find(g => g.id.toString() === selectedGameId);
 
+        if (!platform) {
+            Alert.alert('Erro', 'Selecione uma plataforma.');
+            return;
+        }
+
         if (!selectedGame) {
-            Alert.alert('Erro', 'Por favor selecione um jogo');
+            Alert.alert('Erro', 'Selecione um jogo.');
+            return;
+        }
+
+        if (!status) {
+            Alert.alert('Erro', 'Selecione o status do jogo.');
+            return;
+        }
+
+        if (!startDate) {
+            Alert.alert('Erro', 'Informe a data de início.');
+            return;
+        }
+
+        if (!isValidDateBR(startDate)) {
+            Alert.alert('Erro', 'A data de início deve estar no formato DD/MM/AAAA e ser válida.');
+            return;
+        }
+
+        if (endDate && !isValidDateBR(endDate)) {
+            Alert.alert('Erro', 'A data de término deve estar no formato DD/MM/AAAA e ser válida.');
             return;
         }
 
@@ -166,7 +205,7 @@ export default function GameProgressScreen({ navigation }) {
                     <Text style={styles.label}>Data de início:</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="AAAA-MM-DD"
+                        placeholder="DD/MM/AAAA"
                         placeholderTextColor="#aaa"
                         value={startDate}
                         onChangeText={setStartDate}
@@ -175,7 +214,7 @@ export default function GameProgressScreen({ navigation }) {
                     <Text style={styles.label}>Data de término:</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="AAAA-MM-DD"
+                        placeholder="DD/MM/AAAA"
                         placeholderTextColor="#aaa"
                         value={endDate}
                         onChangeText={setEndDate}

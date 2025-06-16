@@ -5,7 +5,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// Telas principais
 import HomeScreen from './screens/HomeScreen';
 import GameDetailScreen from './screens/GameDetailScreen';
 import MyGamesScreen from './screens/MyGamesScreen';
@@ -15,10 +14,8 @@ import MobileGamesScreen from './screens/MobileGamesScreen';
 import PcGamesScreen from './screens/PcGamesScreen';
 import GameProgressScreen from './screens/GameProgressScreen';
 
-
 import LoginScreen from './screens/usuario/LoginScreen';
 import RegisterScreen from './screens/usuario/RegisterScreen';
-
 import ProfileViewScreen from './screens/usuario/ProfileViewScreen';
 
 const Tab = createBottomTabNavigator();
@@ -52,7 +49,6 @@ function ProfileStack({ onLogout }) {
       <Stack.Screen name="PerfilView">
         {(props) => <ProfileViewScreen {...props} onLogout={onLogout} />}
       </Stack.Screen>
-      {/* Você pode adicionar mais telas do perfil aqui */}
     </Stack.Navigator>
   );
 }
@@ -91,7 +87,7 @@ export default function Navigation() {
     setUser(null);
   };
 
-  if (loading) return null; // Ou exiba um loading spinner/splash
+  if (loading) return null;
 
   return (
     <NavigationContainer>

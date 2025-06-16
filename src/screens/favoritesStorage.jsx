@@ -42,7 +42,7 @@ export const isGameFavorite = async (gameId) => {
   }
 };
 
-// PEGA todos os jogos favoritos (essa é a nova função que você pediu)
+// PEGA todos os jogos favoritos
 export const getFavoriteGames = async () => {
   try {
     const stored = await AsyncStorage.getItem(FAVORITES_KEY);
