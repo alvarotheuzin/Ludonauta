@@ -1,4 +1,3 @@
-import React from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import { Dimensions, View, Text, Image } from 'react-native';
 

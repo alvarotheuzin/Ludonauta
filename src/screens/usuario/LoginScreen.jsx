@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Alert, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({ navigation, onLogin }) {
@@ -24,53 +24,94 @@ export default function LoginScreen({ navigation, onLogin }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-      <Button title="Entrar" onPress={handleLogin} />
-      <Text
-        style={styles.registerLink}
-        onPress={() => navigation.navigate('Register')}
-      >
-        Criar nova conta
-      </Text>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <View>
+        <Text style={styles.title}>Bem-vindo!</Text>
+
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          style={styles.input}
+          placeholderTextColor="#888"
+        />
+        <TextInput
+          placeholder="Senha"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={styles.input}
+          placeholderTextColor="#888"
+        />
+
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Entrar</Text>
+        </TouchableOpacity>
+
+        <Text
+          style={styles.registerLink}
+          onPress={() => navigation.navigate('Register')}
+        >
+          Não tem uma conta? <Text style={styles.link}>Cadastre-se</Text>
+        </Text>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex:1, 
-    justifyContent:'center', 
-    padding:20 
+  container: {
+    flex: 1,
+    backgroundColor: '#121212',
+    justifyContent: 'center',
+    paddingHorizontal: 30,
   },
-  title: { 
-    ontSize:24, 
-    marginBottom:20, 
-    textAlign:'center' 
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    textAlign: 'center',
+    color: '#C17CFF',
   },
-  input: { borderWidth:1, 
-    borderColor:'#ccc', 
-    padding:10, 
-    marginBottom:15, 
-    borderRadius:5 
+  input: {
+    backgroundColor: '#222',
+    color: '#fff',
+    padding: 14,
+    borderRadius: 10,
+    marginBottom: 16,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#333',
   },
-  registerLink: { 
-    marginTop:15, 
-    textAlign:'center', 
-    color:'blue' 
+  button: {
+    backgroundColor: '#C17CFF',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+    shadowColor: '#C17CFF',
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  registerLink: {
+    marginTop: 24,
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#ccc',
+  },
+  link: {
+    color: '#C17CFF',
+    fontWeight: '600',
   },
 });

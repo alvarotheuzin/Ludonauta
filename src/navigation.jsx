@@ -68,6 +68,8 @@ export default function Navigation() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
+ //Verificação de usuário logado
   useEffect(() => {
     const loadUser = async () => {
       const json = await AsyncStorage.getItem('loggedUser');
